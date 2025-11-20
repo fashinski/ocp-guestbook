@@ -1,17 +1,14 @@
 # Build stage
 FROM registry.access.redhat.com/ubi10/go-toolset:10.0 AS builder
 
-# Use the standard writable workdir for UBI images
+# Use a writable workdir
 WORKDIR /opt/app-root/src
 
-# Copy module files first (for better caching)
-COPY go.mod ./
-# If you have go.sum in the backend directory, uncomment this:
-# COPY go.sum ./
-RUN go mod download
-
-# Copy the rest of the source code
+# Copy all backend source code into the image
 COPY . .
+
+# Let Go resolve and download all dependencies based on the source imports
+RUN go mod tidy
 
 # Build the binary
 RUN go build -o /tmp/guestbook-api .
