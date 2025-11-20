@@ -1,13 +1,15 @@
 # Build stage
 FROM registry.access.redhat.com/ubi10/go-toolset:10.0 AS builder
 
-# Use a writable workdir
+# Run as root in the builder so we can modify go.mod/go.sum
+USER 0
+
 WORKDIR /opt/app-root/src
 
-# Copy all backend source code into the image
+# Copy all backend source code
 COPY . .
 
-# Let Go resolve and download all dependencies based on the source imports
+# Resolve and download dependencies, this may update go.mod and go.sum
 RUN go mod tidy
 
 # Build the binary
