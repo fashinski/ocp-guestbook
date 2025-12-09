@@ -1,11 +1,11 @@
 # OpenShift: Distribuerad Gästbok med cache
-
+Eli Fadi 
 I denna labb ska ni bygga och deploya en modern, cloud-native applikation på OpenShift. Applikationen är en gästbok som demonstrerar:
 
 - Multi-tier arkitektur
 - Containerisering med multi-stage builds
 - Configuration management (ConfigMaps & Secrets)
-- Service discovery
+- Service discovery 
 - Caching strategies
 - Persistent storage
 - External routing
