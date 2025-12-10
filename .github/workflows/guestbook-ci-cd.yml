@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,9 +45,16 @@ jobs:
     needs: build-and-push
     permissions:
       contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # NEW STEP – install oc on the GitHub runner
+      - name: Install OpenShift oc client
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: 'latest'
 
       - name: Login to OpenShift
         uses: redhat-actions/oc-login@v1
