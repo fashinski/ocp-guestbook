@@ -1,5 +1,206 @@
+Eli Fadi DevOps 24
+
+
+Guestbook edited – GitHub Actions + OpenShift - NEW steps dated 251210
+
+This repo-EDITING contains my guestbook app from the previous GuestBook OpenShift lab, but wired up with a real CI/CD flow:
+
+- Backend (Go API)
+- Frontend (Nginx serving the static UI)
+- Postgres and Redis as data + cache
+- GitHub Actions builds images and pushes them to GitHub Container Registry (GHCR)
+- OpenShift pulls those images and runs everything in my eli-dev project
+
+  
+
+What i did:
+
+1. Move images to GitHub Container Registry
+
+Before this work, the images were built by OpenShift and stored in its internal registry, with image names like:
+
+     image: image-registry.openshift-image-registry.svc:5000/eli-dev/backend:latest
+     image: image-registry.openshift-image-registry.svc:5000/eli-dev/frontend:latest
+
+
+Today i changed the setup so that GitHub builds the images and stores them in GHCR instead.
+
+The new image references in the YAML look like this:
+
+# openshift/backend.yaml
+containers:
+         - name: backend
+         image: ghcr.io/<github-owner>/guestbook-backend:latest
+         imagePullPolicy: Always
+         ...
+
+# openshift/frontend.yaml
+containers:
+          - name: frontend
+          image: ghcr.io/<github-owner>/guestbook-frontend:latest
+          imagePullPolicy: Always
+          ...
+
+
+In my case fashinski is my GitHub username, so for me it looks like:
+
+    image: ghcr.io/fashinski/guestbook-backend:latest
+    image: ghcr.io/fashinski/guestbook-frontend:latest
+
+
+By doing this, OpenShift no longer depends on its own registry. It just pulls whatever GHCR tag we push from the pipeline.
+
+If the GHCR repos are public, OpenShift can pull them without extra secrets.
+If they are private, you d add an imagePullSecret and point the deployments at that secret.
+
+
+
+
+2. Add GitHub Actions workflow
+3. 
+I added a workflow file at:
+
+    .github/workflows/guestbook-ci-cd.yml
+
+
+The workflow has two jobs:
+
+- Job 1 – 
+- Build and push images to GHCR
+- Triggers on push to the main branch
+- Checks out the repo
+- Logs in to GHCR using GITHUB_TOKEN
+- Builds and pushes backend image:
+         ghcr.io/${{ github.repository_owner }}/guestbook-backend:latest
+- Builds and pushes frontend image:
+         ghcr.io/${{ github.repository_owner }}/guestbook-frontend:latest
+
+
+So every time I push to main, Github builds fresh images for both services and updates the :latest tag in GHCR.
+
+- Job 2 – 
+Deploy to OpenShift
+This job runs after the images are built.
+What it does:
+
+- Checks out the repo again (so it has the YAML files).
+- Installs the OpenShift oc CLI on the GitHub runner:
+
+      - name: Install OpenShift oc client
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: 'latest'
+
+
+Logs in to my OpenShift cluster using a token stored as repo secrets:
+
+    - name: Login to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OC_SERVER }}
+        openshift_token: ${{ secrets.OC_TOKEN }}
+        namespace: ${{ secrets.OC_NAMESPACE }}
+        insecure_skip_tls_verify: true
+
+
+Applies the manifests:
+
+    oc apply -f openshift/postgres.yaml  -n "${OC_NAMESPACE}"
+    oc apply -f openshift/redis.yaml     -n "${OC_NAMESPACE}"
+    oc apply -f openshift/backend.yaml   -n "${OC_NAMESPACE}"
+    oc apply -f openshift/frontend.yaml  -n "${OC_NAMESPACE}"
+
+
+Restart backend and frontend deployments so Openshift pulls the new GHCR images:
+
+    oc rollout restart deployment/backend  -n "${OC_NAMESPACE}"
+    oc rollout restart deployment/frontend -n "${OC_NAMESPACE}"
+
+    
+    
+
+3. Required secrets
+
+In the GitHub repo, under:
+
+    Settings → Secrets and variables → Actions
+
+I created these secrets:
+
+    OC_SERVER – OpenShift API URL
+
+    OC_TOKEN – my login token (service account or personal token)
+
+    OC_NAMESPACE – the project name in OpenShift (for me: eli-dev)
+
+GITHUB_TOKEN is already provided by Github, so i didn’t need to create that one.
+
+
+
+
+4. How the flow works now
+
+End to end flow after all changes:
+
+- I change something in the code or YAML and push to main.
+
+- GitHub Actions:
+
+      Builds backend + frontend images from the repo
+
+      Pushes them to GHCR
+
+- The deploy job:
+
+      Logs in to OpenShift
+
+      Applies the latest YAML manifests
+
+      Restarts the guestbook deployments
+
+- OpenShift pulls the new images from GHCR and runs the updated version of the app.
+
+So the “contract” between the pipeline and the cluster is basically:
+
+- Workflow pushes to:
+
+      ghcr.io/fashinski/guestbook-backend:latest
+      ghcr.io/fashinski/guestbook-frontend:latest
+
+- Deployments pull from the same tags, which we wired into backend.yaml and frontend.yaml.
+
+
+
+  
+
+5. Manual checks
+
+If I want to double check things from my laptop, i can still use oc:
+
+# check deployments
+oc get deploy -n eli-dev
+
+# check pods
+oc get pods -n eli-dev
+
+# check route / app
+oc get routes -n eli-dev
+
+<img width="1379" height="929" alt="image" src="https://github.com/user-attachments/assets/5014e86b-0cc7-41c4-ab0c-188ef735f260" />
+
+
+
+And of course, i can open the route in the browser and post a new guestbok entry to see that everything still talks nicely: frontend → backend → Postgres/Redis.
+
+That’s the story of todays work: i moved image building from OpenShift to GitHub, pointed the YAML to GHCR, and wired it all together with a simple CI/CD pipeline.
+
+
+End for job dated 251012
+----------------------------------------------------
+
+
 # OpenShift: Distribuerad Gästbok med cache
-Eli Fadi 
+
 I denna labb ska ni bygga och deploya en modern, cloud-native applikation på OpenShift. Applikationen är en gästbok som demonstrerar:
 
 - Multi-tier arkitektur
