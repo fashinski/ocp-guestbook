@@ -3,6 +3,9 @@ Eli Fadi DevOps 24
 
 Guestbook edited – GitHub Actions + OpenShift - NEW steps dated 251210
 
+<img width="298" height="281" alt="Screenshot 2025-12-10 110822" src="https://github.com/user-attachments/assets/836c1ab6-a833-47a0-9e46-f87224e765ec" />
+
+
 This repo-EDITING contains my guestbook app from the previous GuestBook OpenShift lab, but wired up with a real CI/CD flow:
 
 - Backend (Go API)
@@ -34,12 +37,19 @@ containers:
          imagePullPolicy: Always
          ...
 
+<img width="992" height="739" alt="Screenshot 2025-12-10 104520" src="https://github.com/user-attachments/assets/65f71bcc-aeb2-432e-adb3-fcf8a464761d" />
+
+         
+
 # openshift/frontend.yaml
 containers:
           - name: frontend
           image: ghcr.io/<github-owner>/guestbook-frontend:latest
           imagePullPolicy: Always
           ...
+
+<img width="987" height="921" alt="Screenshot 2025-12-10 105207" src="https://github.com/user-attachments/assets/fd8cd48e-ee2c-4523-914a-bc1f12d48793" />
+
 
 
 In my case fashinski is my GitHub username, so for me it looks like:
@@ -57,10 +67,13 @@ If they are private, you d add an imagePullSecret and point the deployments at t
 
 
 2. Add GitHub Actions workflow
-3. 
+   
 I added a workflow file at:
 
     .github/workflows/guestbook-ci-cd.yml
+
+
+<img width="1484" height="965" alt="image" src="https://github.com/user-attachments/assets/8ee8f012-9e94-45a5-8a49-fb7af22685eb" />
 
 
 The workflow has two jobs:
@@ -136,6 +149,8 @@ I created these secrets:
 GITHUB_TOKEN is already provided by Github, so i didn’t need to create that one.
 
 
+<img width="1426" height="912" alt="Screenshot 2025-12-10 112107" src="https://github.com/user-attachments/assets/deedf52e-7c40-4ac6-b77b-6617569ef7ba" />
+
 
 
 4. How the flow works now
@@ -195,8 +210,28 @@ And of course, i can open the route in the browser and post a new guestbok entry
 That’s the story of todays work: i moved image building from OpenShift to GitHub, pointed the YAML to GHCR, and wired it all together with a simple CI/CD pipeline.
 
 
+
+<img width="1828" height="887" alt="Screenshot 2025-12-10 123243" src="https://github.com/user-attachments/assets/3ee1e9dc-31ad-4dcd-b9a9-9738479860a6" />
+
+-
+
+<img width="1840" height="774" alt="Screenshot 2025-12-10 123453" src="https://github.com/user-attachments/assets/c221a938-1411-4f79-8933-e363cb7bf0bc" />
+
+-
+
+
+<img width="1827" height="916" alt="Screenshot 2025-12-10 124004" src="https://github.com/user-attachments/assets/c834b157-40fe-402b-9e28-332365be3a37" />
+
+-
+
+
 End for job dated 251012
-----------------------------------------------------
+
+-
+
+------------------------------------------------------------------------------------
+
+-
 
 
 # OpenShift: Distribuerad Gästbok med cache
