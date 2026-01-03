@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: redis-secret
+  name: eli-redis-secret
 type: Opaque
 stringData:
   REDIS_PASSWORD: redispass
@@ -9,7 +9,7 @@ stringData:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: redis-pvc
+  name: eli-redis-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -20,16 +20,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: eli-redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: eli-redis
   template:
     metadata:
       labels:
-        app: redis
+        app: eli-redis
     spec:
       containers:
         - name: redis
@@ -40,7 +40,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: redis-secret
+                  name: eli-redis-secret
                   key: REDIS_PASSWORD
           volumeMounts:
             - name: redis-data
@@ -48,16 +48,16 @@ spec:
       volumes:
         - name: redis-data
           persistentVolumeClaim:
-            claimName: redis-pvc
+            claimName: eli-redis-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
+  name: eli-redis
 spec:
   type: ClusterIP
   selector:
-    app: redis
+    app: eli-redis
   ports:
     - name: redis
       port: 6379

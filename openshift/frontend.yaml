@@ -1,24 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: eli-frontend
 spec:
-  replicas: 2
+  replicas: 2   # <-- X ( Du Jonas ;-) welcome to change to X+2)
   selector:
     matchLabels:
-      app: frontend
+      app: eli-frontend
   template:
     metadata:
       labels:
-        app: frontend
+        app: eli-frontend
     spec:
       containers:
         - name: frontend
-          image: image-registry.openshift-image-registry.svc:5000/eli-dev/frontend:latest
+          image: ghcr.io/fashinski/guestbook-frontend:dev
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          # Simple readiness/liveness probe on root page
           livenessProbe:
             httpGet:
               path: /
@@ -35,12 +34,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: eli-frontend
 spec:
   selector:
-    app: frontend
+    app: eli-frontend
   ports:
     - name: http
       port: 8080
       targetPort: 8080
   type: ClusterIP
+

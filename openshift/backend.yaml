@@ -1,58 +1,58 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: backend-config
+  name: eli-backend-config
 data:
-  DB_HOST: postgres
+  DB_HOST: eli-postgres
   DB_PORT: "5432"
   DB_NAME: guestbook
-  REDIS_HOST: redis
+  REDIS_HOST: eli-redis
   REDIS_PORT: "6379"
   PORT: "8080"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: eli-backend
 spec:
-  replicas: 2
+  replicas: 2   # <-- X (Jonas will change to X+2)
   selector:
     matchLabels:
-      app: backend
+      app: eli-backend
   template:
     metadata:
       labels:
-        app: backend
+        app: eli-backend
     spec:
       containers:
         - name: backend
-          image: image-registry.openshift-image-registry.svc:5000/eli-dev/backend:latest
+          image: ghcr.io/fashinski/guestbook-backend:dev
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: backend-config
+                name: eli-backend-config
           env:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: eli-postgres-secret
                   key: POSTGRESQL_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: eli-postgres-secret
                   key: POSTGRESQL_PASSWORD
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: eli-postgres-secret
                   key: POSTGRESQL_DATABASE
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: redis-secret
+                  name: eli-redis-secret
                   key: REDIS_PASSWORD
           livenessProbe:
             httpGet:
@@ -70,10 +70,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: eli-backend
 spec:
   selector:
-    app: backend
+    app: eli-backend
   ports:
     - name: http
       port: 8080
