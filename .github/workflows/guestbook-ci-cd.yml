@@ -6,12 +6,12 @@ on:
     paths:
       - "backend/**"
       - "frontend/**"
-      - "openshift/**"
       - ".github/workflows/guestbook-ci-cd.yml"
   workflow_dispatch:
 
 jobs:
   build-push-and-bump:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
