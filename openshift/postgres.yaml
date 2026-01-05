@@ -38,6 +38,15 @@ spec:
           image: quay.io/fedora/postgresql-16:latest
           ports:
             - containerPort: 5432
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
           env:
             - name: POSTGRESQL_USER
               valueFrom:
@@ -74,3 +83,4 @@ spec:
     - name: postgres
       port: 5432
       targetPort: 5432
+
