@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: eli-frontend
 spec:
-  replicas: 4   # <-- X ( Hej Jonas :-) welcome to change it to X+2)
+  replicas: 2   # <-- X ( Hej Jonas :-) welcome to change it to X+2)
   selector:
     matchLabels:
       app: eli-frontend
