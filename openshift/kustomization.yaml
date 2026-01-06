@@ -9,7 +9,7 @@ resources:
 images:
   - name: ghcr.io/fashinski/guestbook-backend
     newName: ghcr.io/fashinski/guestbook-backend
-    newTag: 321455a
+    newTag: 255c3ae
   - name: ghcr.io/fashinski/guestbook-frontend
     newName: ghcr.io/fashinski/guestbook-frontend
-    newTag: 321455a
+    newTag: 255c3ae
