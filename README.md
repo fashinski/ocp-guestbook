@@ -19,6 +19,9 @@ How to test - Quick test:
 1) Change something in `frontend/` or `backend/` and push to `main`.
 2) GitHub Actions will build/push images + commit the new tag in `openshift/kustomization.yaml` (Argo CD then syncs that commit when available).
 
+   
+<img width="1557" height="907" alt="image" src="https://github.com/user-attachments/assets/804e9f73-efff-4a56-a823-fcc9576d7916" />
+
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
