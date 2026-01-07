@@ -1,7 +1,31 @@
 Eli Fadi DevOps 24
 
+## Guestbook edited GitOps setup / recent changes (Stage 1–5) - NEW steps dated 260107
 
-Guestbook edited – GitHub Actions + OpenShift - NEW steps dated 251210
+
+- All OpenShift resources are prefixed with `eli-` to keep the deployment unique in the shared namespace (e.g., eli-frontend, eli-backend, eli-postgres, eli-redis, eli-guestbook).
+- Frontend NGINX proxy was updated to point to the prefixed backend service: `eli-backend:8080` (instead of `backend:8080`).
+- Deployment is GitOps-based using Kustomize: `openshift/kustomization.yaml` controls the image tags for backend and frontend.
+- CI is done with GitHub Actions only (no direct OpenShift deploy from Actions):
+  - Builds & pushes images to GHCR: `ghcr.io/fashinski/guestbook-backend` and `ghcr.io/fashinski/guestbook-frontend`
+  - Tags images with `latest` + `${GITHUB_SHA::7}`
+  - Updates `openshift/kustomization.yaml` with the new tag and commits it back (e.g. `chore(gitops): deploy <sha7>`)
+  - Loop prevention: workflow skips commits from `github-actions[bot]`
+- GHCR packages are set to Public so the cluster can pull images without an imagePullSecret.
+  
+
+
+### How to test - Quick test
+1) Change something in `frontend/` or `backend/` and push to `main`.
+2) GitHub Actions will build/push images + commit the new tag in `openshift/kustomization.yaml` (Argo CD then syncs that commit when available).
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## Guestbook edited – GitHub Actions + OpenShift - NEW steps dated 251210
 
 <img width="298" height="281" alt="Screenshot 2025-12-10 110822" src="https://github.com/user-attachments/assets/836c1ab6-a833-47a0-9e46-f87224e765ec" />
 
