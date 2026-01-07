@@ -1,6 +1,6 @@
 Eli Fadi DevOps 24
 
-## Guestbook edited GitOps setup / recent changes (Stage 1–5) - NEW steps dated 260107
+Guestbook edited GitOps setup / recent changes (Stage 1–5) - NEW steps dated 260107:
 
 
 - All OpenShift resources are prefixed with `eli-` to keep the deployment unique in the shared namespace (e.g., eli-frontend, eli-backend, eli-postgres, eli-redis, eli-guestbook).
@@ -15,7 +15,7 @@ Eli Fadi DevOps 24
   
 
 
-### How to test - Quick test
+How to test - Quick test:
 1) Change something in `frontend/` or `backend/` and push to `main`.
 2) GitHub Actions will build/push images + commit the new tag in `openshift/kustomization.yaml` (Argo CD then syncs that commit when available).
 
