@@ -20,7 +20,10 @@ How to test - Quick test:
 2) GitHub Actions will build/push images + commit the new tag in `openshift/kustomization.yaml` (Argo CD then syncs that commit when available).
 
    
-<img width="1557" height="907" alt="image" src="https://github.com/user-attachments/assets/804e9f73-efff-4a56-a823-fcc9576d7916" />
+<img width="1208" height="784" alt="Screenshot 2026-01-08 155947" src="https://github.com/user-attachments/assets/4eb3dc34-68bd-41f7-813d-1a5a837af908" />
+<img width="1295" height="895" alt="Screenshot 2026-01-08 160356" src="https://github.com/user-attachments/assets/380c7042-de75-46b7-9fba-19a68f9e0f66" />
+
+
 
 
 
