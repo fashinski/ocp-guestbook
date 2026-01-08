@@ -15,7 +15,7 @@ kind: Deployment
 metadata:
   name: eli-backend
 spec:
-  replicas: 2   # <-- X (Hej Jonas, you can change to X+2) i test it :-)
+  replicas: 4   # <-- X (Hej Jonas, you can change to X+2) i test it :-)
   selector:
     matchLabels:
       app: eli-backend
